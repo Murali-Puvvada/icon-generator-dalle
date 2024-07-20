@@ -20,5 +20,14 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  //To Allow Images from these domains
+  images: {
+    remotePatterns: [
+      {
+        hostname: "images.unsplash.com",
+      },
+    ],
+    domains: ["murali-icon-generator-dalle.s3.eu-north-1.amazonaws.com"],
+  },
 };
 export default config;
