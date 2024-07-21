@@ -48,7 +48,7 @@ async function uploadImageToS3(
 
 export const generateRouter = createTRPCRouter({
   generateIcon: protectedProcedure
-    .input(z.object({ prompt: z.string() })) //Input Validation using Zod
+    .input(z.object({ prompt: z.string(), color: z.string() })) //Input Validation using Zod
     .mutation(async ({ ctx, input }) => {
       //Procedure with mutation for changing data
       const { count } = await ctx.prisma.user.updateMany({
