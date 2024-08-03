@@ -27,6 +27,7 @@ const server = z.object({
   STRIPE_SECRET_KEY: z.string(),
   HOST_NAME: z.string(),
   STRIPE_WEBHOOK_ENDPOINT_SECRET: z.string(),
+  AWS_BUCKET_NAME: z.string(),
 });
 
 /**
@@ -36,6 +37,7 @@ const server = z.object({
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_STRIPE_KEY: z.string(),
+  NEXT_PUBLIC_AWS_BUCKET_NAME: z.string(),
 });
 
 /**
@@ -59,6 +61,8 @@ const processEnv = {
   HOST_NAME: process.env.HOST_NAME,
   STRIPE_WEBHOOK_ENDPOINT_SECRET: process.env.STRIPE_WEBHOOK_ENDPOINT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+  AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+  NEXT_PUBLIC_AWS_BUCKET_NAME: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
 };
 
 // Don't touch the part below

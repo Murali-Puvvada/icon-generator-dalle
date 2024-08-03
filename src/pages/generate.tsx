@@ -18,22 +18,42 @@ const colors = [
   "black",
 ];
 
+const shapes = ["square", "circle", "rounded"];
+
+const styles = [
+  "claymorphic",
+  "3d rendered",
+  "pixelated",
+  "illustrated with color pencil",
+];
+
 const GeneratePage: NextPage = () => {
   const [form, setForm] = useState({
     prompt: "",
     color: "",
+    shape: "",
+    style: "",
+    numberOfIcons: "1",
   });
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrls, setImageUrls] = useState<{ imageUrl: string }[]>([]);
+  const [error, setError] = useState("");
   //Calling trpc client with generateIcon procedure and useMutation
   const generateIcon = api.generate.generateIcon.useMutation({
-    onSuccess({ imageUrl }) {
-      setImageUrl(imageUrl);
+    onSuccess(data) {
+      setImageUrls(data);
+    },
+    onError(error) {
+      setError(error.message);
     },
   });
 
   function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
-    generateIcon.mutate(form);
+    setError("");
+    generateIcon.mutate({
+      ...form,
+      numberOfIcons: parseInt(form.numberOfIcons),
+    });
   }
 
   function updateForm(key: string) {
@@ -76,6 +96,52 @@ const GeneratePage: NextPage = () => {
               </label>
             ))}
           </FormGroup>
+
+          <h2 className="text-xl">3. Pick your icon shape.</h2>
+          <FormGroup className="mb-12 grid grid-cols-4">
+            {shapes.map((shape) => (
+              <label key={shape} className="flex gap-2 text-2xl">
+                <input
+                  type="radio"
+                  name="shape"
+                  checked={shape === form.shape}
+                  onChange={() => setForm((prev) => ({ ...prev, shape }))}
+                ></input>
+                {shape}
+              </label>
+            ))}
+          </FormGroup>
+
+          <h2 className="text-xl">4. Pick your icon style.</h2>
+          <FormGroup className="mb-12 grid grid-cols-4">
+            {styles.map((style) => (
+              <label key={style} className="flex gap-2 text-2xl">
+                <input
+                  type="radio"
+                  name="style"
+                  checked={style === form.style}
+                  onChange={() => setForm((prev) => ({ ...prev, style }))}
+                ></input>
+                {style}
+              </label>
+            ))}
+          </FormGroup>
+
+          <h2 className="text-xl">5. How many icons do you want</h2>
+          <FormGroup className="mb-12">
+            <label>Number of Icons</label>
+            <Input
+              value={form.numberOfIcons}
+              onChange={updateForm("numberOfIcons")}
+            ></Input>
+          </FormGroup>
+
+          {error && (
+            <div className="rounded bg-red-500 p-8 text-xl text-white">
+              {error}
+            </div>
+          )}
+
           <Button
             isLoading={generateIcon.isLoading}
             disabled={generateIcon.isLoading}
@@ -83,17 +149,20 @@ const GeneratePage: NextPage = () => {
             Submit
           </Button>
         </form>
-        {imageUrl && (
+        {imageUrls.length > 0 && (
           <>
             <h2 className="text-xl">Your Icons</h2>
             <section className="mb-12 grid grid-cols-4 gap-4">
-              <Image
-                src={imageUrl}
-                alt="an image of your generated prompt"
-                width="100"
-                height="100"
-                className="w-full"
-              />
+              {imageUrls.map(({ imageUrl }) => (
+                <Image
+                  key={imageUrl}
+                  src={imageUrl}
+                  alt="an image of your generated prompt"
+                  width="256"
+                  height="256"
+                  className="w-full"
+                />
+              ))}
             </section>
           </>
         )}
